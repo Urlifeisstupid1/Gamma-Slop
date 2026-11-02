@@ -1,5 +1,5 @@
-FROM devkitpro/devkitppc:20260225
+FROM devkitpro/devkitppc:latest
 
-COPY --from=ghcr.io/wiiu-env/wiiupluginsystem:20260418 /artifacts $DEVKITPRO
+COPY --from=ghcr.io/wiiu-env/wiiupluginsystem:latest /artifacts $DEVKITPRO
 
 WORKDIR project

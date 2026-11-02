@@ -18,24 +18,24 @@ WUT_ROOT := $(DEVKITPRO)/wut
 # DATA is a list of directories containing data files
 # INCLUDES is a list of directories containing header files
 #-------------------------------------------------------------------------------
-TARGET		:=	Gamma-Slop
-BUILD		:=	build
-SOURCES		:=	src
-DATA		:=	data
-INCLUDES	:=	src
+TARGET       :=    Gamma-Slop
+BUILD        :=    build
+SOURCES      :=    src
+DATA         :=    data
+INCLUDES     :=    src
 
 #-------------------------------------------------------------------------------
 # options for code generation
 #-------------------------------------------------------------------------------
-CFLAGS	:=	-g -Wall -O2 -ffunction-sections \
-			$(MACHDEP)
+CFLAGS    :=    -g -Wall -O2 -ffunction-sections \
+            $(MACHDEP)
 
-CFLAGS	+=	$(INCLUDE) -D__WIIU__ -D__WUT__ -D__WUPS__ 
+CFLAGS    +=    $(INCLUDE) -D__WIIU__ -D__WUT__ -D__WUPS__
 
-CXXFLAGS	:= $(CFLAGS) -std=c++20
+CXXFLAGS    := $(CFLAGS) -std=c++20
 
-ASFLAGS	:=	-g $(ARCH)
-LDFLAGS	=	-g $(ARCH) $(RPXSPECS) -Wl,-Map,$(notdir $*.map) $(WUPSSPECS) 
+ASFLAGS    :=    -g $(ARCH)
+LDFLAGS    =    -g $(ARCH) $(RPXSPECS) -Wl,-Map,$(notdir $*.map) $(WUPSSPECS)
 
 ifeq ($(DEBUG),1)
 CXXFLAGS += -DDEBUG -g
@@ -47,13 +47,13 @@ CXXFLAGS += -DDEBUG -DVERBOSE_DEBUG -g
 CFLAGS += -DDEBUG -DVERBOSE_DEBUG -g
 endif
 
-LIBS	:= -lwups -lwut 
+LIBS    := -lwups -lwut
 
 #-------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level
 # containing include and lib
 #-------------------------------------------------------------------------------
-LIBDIRS	:= $(PORTLIBS) $(WUPS_ROOT) $(WUT_ROOT)
+LIBDIRS    := $(PORTLIBS) $(WUPS_ROOT) $(WUT_ROOT)
 
 #-------------------------------------------------------------------------------
 # no real need to edit anything past this point unless you need to add additional
@@ -62,43 +62,43 @@ LIBDIRS	:= $(PORTLIBS) $(WUPS_ROOT) $(WUT_ROOT)
 ifneq ($(BUILD),$(notdir $(CURDIR)))
 #-------------------------------------------------------------------------------
 
-export OUTPUT	:=	$(CURDIR)/$(TARGET)
-export TOPDIR	:=	$(CURDIR)
+export OUTPUT    :=    $(CURDIR)/$(BUILD)/$(TARGET)
+export TOPDIR    :=    $(CURDIR)
 
-export VPATH	:=	$(foreach dir,$(SOURCES),$(CURDIR)/$(dir)) \
-			$(foreach dir,$(DATA),$(CURDIR)/$(dir))
+export VPATH    :=    $(foreach dir,$(SOURCES),$(CURDIR)/$(dir)) \
+            $(foreach dir,$(DATA),$(CURDIR)/$(dir))
 
-export DEPSDIR	:=	$(CURDIR)/$(BUILD)
+export DEPSDIR    :=    $(CURDIR)/$(BUILD)
 
-CFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.c)))
-CPPFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.cpp)))
-SFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.s)))
-BINFILES	:=	$(foreach dir,$(DATA),$(notdir $(wildcard $(dir)/*.*)))
+CFILES        :=    $(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.c)))
+CPPFILES    :=    $(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.cpp)))
+SFILES        :=    $(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.s)))
+BINFILES    :=    $(foreach dir,$(DATA),$(notdir $(wildcard $(dir)/*.*)))
 
 #-------------------------------------------------------------------------------
 # use CXX for linking C++ projects, CC for standard C
 #-------------------------------------------------------------------------------
 ifeq ($(strip $(CPPFILES)),)
 #-------------------------------------------------------------------------------
-	export LD	:=	$(CC)
+    export LD    :=    $(CC)
 #-------------------------------------------------------------------------------
 else
 #-------------------------------------------------------------------------------
-	export LD	:=	$(CXX)
+    export LD    :=    $(CXX)
 #-------------------------------------------------------------------------------
 endif
 #-------------------------------------------------------------------------------
 
-export OFILES_BIN	:=	$(addsuffix .o,$(BINFILES))
-export OFILES_SRC	:=	$(CPPFILES:.cpp=.o) $(CFILES:.c=.o) $(SFILES:.s=.o)
-export OFILES 	:=	$(OFILES_BIN) $(OFILES_SRC)
-export HFILES_BIN	:=	$(addsuffix .h,$(subst .,_,$(BINFILES)))
+export OFILES_BIN    :=    $(addsuffix .o,$(BINFILES))
+export OFILES_SRC    :=    $(CPPFILES:.cpp=.o) $(CFILES:.c=.o) $(SFILES:.s=.o)
+export OFILES     :=    $(OFILES_BIN) $(OFILES_SRC)
+export HFILES_BIN    :=    $(addsuffix .h,$(subst .,_,$(BINFILES)))
 
-export INCLUDE	:=	$(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
-			$(foreach dir,$(LIBDIRS),-I$(dir)/include) \
-			-I$(CURDIR)/$(BUILD)
+export INCLUDE    :=    $(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
+            $(foreach dir,$(LIBDIRS),-I$(dir)/include) \
+            -I$(CURDIR)/$(BUILD)
 
-export LIBPATHS	:=	$(foreach dir,$(LIBDIRS),-L$(dir)/lib)
+export LIBPATHS    :=    $(foreach dir,$(LIBDIRS),-L$(dir)/lib)
 
 .PHONY: $(BUILD) clean all
 
@@ -112,28 +112,28 @@ $(BUILD):
 #-------------------------------------------------------------------------------
 clean:
 	@echo clean ...
-	@rm -fr $(BUILD) $(TARGET).wps $(TARGET).elf
+	@rm -fr $(BUILD)
 
 #-------------------------------------------------------------------------------
 else
-.PHONY:	all
+.PHONY:    all
 
-DEPENDS	:=	$(OFILES:.o=.d)
+DEPENDS    :=    $(OFILES:.o=.d)
 
 #-------------------------------------------------------------------------------
 # main targets
 #-------------------------------------------------------------------------------
-all	:	$(OUTPUT).wps
+all    :    $(OUTPUT).wps
 
-$(OUTPUT).wps	:	$(OUTPUT).elf
-$(OUTPUT).elf	:	$(OFILES)
+$(OUTPUT).wps    :    $(OUTPUT).elf
+$(OUTPUT).elf    :    $(OFILES)
 
-$(OFILES_SRC)	: $(HFILES_BIN)
+$(OFILES_SRC)    : $(HFILES_BIN)
 
 #-------------------------------------------------------------------------------
 # you need a rule like this for each extension you use as binary data
 #-------------------------------------------------------------------------------
-%.bin.o	%_bin.h :	%.bin
+%.bin.o    %_bin.h :    %.bin
 #-------------------------------------------------------------------------------
 	@echo $(notdir $<)
 	@$(bin2o)
